@@ -1,0 +1,16 @@
+{
+    "name": "token",
+    "description": "token",
+    "version": "0.0.0",
+    "author": {
+        "name": "serandives",
+        "email": "serandives@gmail.com"
+    },
+    "dependencies": {
+        "mongoose": "3.8.12"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/serandules/token.git"
+    }
+}
