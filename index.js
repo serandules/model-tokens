@@ -1,17 +1,19 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
+var async = require('async');
 
 var TOKEN_LENGTH = 48;
 
 var validity = 10 * 60 * 1000;
 
 var token = Schema({
-    created: { type: Date, default: Date.now },
-    validity: { type: Number, default: validity },
-    value: String,
-    user: { type: Schema.Types.ObjectId, ref: 'User' },
-    client: { type: Schema.Types.ObjectId, ref: 'Client' }
+    created: {type: Date, default: Date.now},
+    validity: {type: Number, default: validity},
+    access: String,
+    refresh: String,
+    user: {type: Schema.Types.ObjectId, ref: 'User'},
+    client: {type: Schema.Types.ObjectId, ref: 'Client'}
 });
 
 token.methods.valid = function () {
@@ -28,14 +30,31 @@ token.statics.search = function (value, cb) {
 
 token.pre('save', function (next) {
     var that = this;
-    crypto.randomBytes(TOKEN_LENGTH, function (err, buf) {
-        if (err) {
+    async.parallel([
+            function (cb) {
+                crypto.randomBytes(TOKEN_LENGTH, function (err, buf) {
+                    if (err) {
+                        cb(err);
+                        return;
+                    }
+                    that.access = buf.toString('hex');
+                    cb(null);
+                });
+            },
+            function (cb) {
+                crypto.randomBytes(TOKEN_LENGTH, function (err, buf) {
+                    if (err) {
+                        cb(err);
+                        return;
+                    }
+                    that.refresh = buf.toString('hex');
+                    cb(null);
+                });
+            }
+        ],
+        function (err, results) {
             next(err);
-            return;
-        }
-        that.token = buf.toString('hex');
-        next();
-    });
+        });
 });
 
 token.virtual('id').get(function () {
