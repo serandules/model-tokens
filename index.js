@@ -5,25 +5,33 @@ var async = require('async');
 
 var TOKEN_LENGTH = 48;
 
-var validity = 10 * 60 * 1000;
+var accessibility = 30 * 1000;
+var refreshability = 2 * accessibility;
 
 var token = Schema({
     created: {type: Date, default: Date.now},
-    validity: {type: Number, default: validity},
     access: String,
+    accessible: {type: Number, default: accessibility},
     refresh: String,
+    refreshable: {type: Number, default: refreshability},
     user: {type: Schema.Types.ObjectId, ref: 'User'},
     client: {type: Schema.Types.ObjectId, ref: 'Client'}
 });
 
-token.methods.valid = function () {
-    return new Date().getTime() - this.created.getTime() < this.validity;
+token.methods.accessibility = function () {
+    var exin = this.created.getTime() + this.accessible - new Date().getTime();
+    return exin > 0 ? exin : 0;
+};
+
+token.methods.refreshability = function () {
+    var exin = this.created.getTime() + this.refreshable - new Date().getTime();
+    return exin > 0 ? exin : 0;
 };
 
 token.statics.search = function (value, cb) {
     this.findOne({
         value: value
-    }).select('created validity').exec(function (err, token) {
+    }).select('created accessible').exec(function (err, token) {
         cb(err, (err || !token) ? false : token);
     });
 };
