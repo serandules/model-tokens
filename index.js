@@ -5,8 +5,8 @@ var async = require('async');
 
 var TOKEN_LENGTH = 48;
 
-var accessibility = 9 * 1000;
-var refreshability = 2 * accessibility;
+var accessibility = 60 * 1000;
+var refreshability = 10 * accessibility;
 
 var token = Schema({
     created: {type: Date, default: Date.now},
