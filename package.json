@@ -7,9 +7,9 @@
         "email": "serandives@gmail.com"
     },
     "dependencies": {
-        "debug":"*",
-        "mongoose": "3.8.12",
-        "async": "*"
+        "debug": "2.1.1",
+        "mongoose": "3.8.23",
+        "async": "0.9.0"
     },
     "repository": {
         "type": "git",
