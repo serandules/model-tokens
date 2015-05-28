@@ -1,4 +1,4 @@
-var debug = require('debug')('serandules:token');
+var log = require('logger')('token');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
