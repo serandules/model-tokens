@@ -32,6 +32,14 @@ var token = Schema({
 
 token.plugin(autopopulate);
 
+token.set('toJSON', {
+    getters: true,
+    //virtuals: false,
+    transform: function (doc, ret, options) {
+        delete ret._id;
+    }
+});
+
 token.methods.accessibility = function () {
     var exin = this.created.getTime() + this.accessible - new Date().getTime();
     return exin > 0 ? exin : 0;
