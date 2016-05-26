@@ -4,6 +4,7 @@ var autopopulate = require('mongoose-autopopulate');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var async = require('async');
+var Lock = require('lock');
 
 var permission = require('permission');
 
@@ -94,6 +95,28 @@ token.pre('save', function (next) {
             next(err);
         });
 });
+
+token.statics.refresh = function (id, done) {
+    var Token = this;
+    Lock.acquire('refresh-' + id, function (err, release) {
+        if (err) {
+            return done(err);
+        }
+        crypto.randomBytes(TOKEN_LENGTH, function (err, buf) {
+            if (err) {
+                release();
+                return done(err);
+            }
+            Token.update({_id: id}, {
+                access: buf.toString('hex'),
+                created: Date.now()
+            }, function (err) {
+                release();
+                done(err);
+            });
+        });
+    });
+};
 
 token.virtual('id').get(function () {
     return this._id;
