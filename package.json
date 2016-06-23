@@ -11,6 +11,7 @@
     "mongoose-autopopulate": "0.*",
     "async": "1.*",
     "logger": "serandules/logger#master",
+    "lock": "serandules/lock#master",
     "permission": "serandules/permission#master"
   },
   "repository": {
