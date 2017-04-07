@@ -1,4 +1,4 @@
-var log = require('logger')('token');
+var log = require('logger')('model-tokens');
 var mongoose = require('mongoose');
 var autopopulate = require('mongoose-autopopulate');
 var Schema = mongoose.Schema;
