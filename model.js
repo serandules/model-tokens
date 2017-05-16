@@ -4,8 +4,9 @@ var autopopulate = require('mongoose-autopopulate');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var async = require('async');
-var Lock = require('lock');
 
+var Lock = require('lock');
+var types = require('validators').types;
 var permission = require('permission');
 
 var TOKEN_LENGTH = 48;
@@ -14,22 +15,33 @@ var accessibility = 60 * 1000;
 var refreshability = 10 * accessibility;
 
 var token = Schema({
-    created: {type: Date, default: Date.now},
-    access: String,
-    accessible: {type: Number, default: accessibility},
-    refresh: String,
-    refreshable: {type: Number, default: refreshability},
-    user: {type: Schema.Types.ObjectId, ref: 'User', autopopulate: true},
-    client: {type: Schema.Types.ObjectId, ref: 'Client', autopopulate: true},
     has: {
-        type: Object, default: {
+        type: Object,
+        default: {
             '*': {
                 '': ['*']
             }
         }
     },
-    allowed: {type: Object, default: {}}
-});
+    allowed: {type: Object, default: {}},
+    created: {type: Date, default: Date.now},
+    access: String,
+    accessible: {type: Number, default: accessibility},
+    refresh: String,
+    refreshable: {type: Number, default: refreshability},
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'users',
+        validator: types.ref(),
+        autopopulate: true
+    },
+    client: {
+        type: Schema.Types.ObjectId,
+        ref: 'clients',
+        validator: types.ref(),
+        autopopulate: true
+    }
+}, {collection: 'tokens'});
 
 token.plugin(autopopulate);
 
@@ -146,4 +158,4 @@ token.virtual('id').get(function () {
  callback(null);
  };*/
 
-module.exports = mongoose.model('Token', token);
+module.exports = mongoose.model('tokens', token);
