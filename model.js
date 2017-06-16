@@ -15,6 +15,13 @@ var accessibility = 60 * 1000;
 var refreshability = 10 * accessibility;
 
 var token = Schema({
+    user: {
+        server: true,
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'users',
+        validator: types.ref()
+    },
     has: {
         type: Object,
         default: {
@@ -29,12 +36,6 @@ var token = Schema({
     accessible: {type: Number, default: accessibility},
     refresh: String,
     refreshable: {type: Number, default: refreshability},
-    user: {
-        type: Schema.Types.ObjectId,
-        ref: 'users',
-        validator: types.ref(),
-        autopopulate: true
-    },
     client: {
         type: Schema.Types.ObjectId,
         ref: 'clients',
@@ -66,8 +67,7 @@ token.methods.refreshability = function () {
 
 token.methods.can = function (perm, action, o) {
     var trees = [this.has, this.client.has];
-    return permission.every(trees, perm, action) &&
-        permission.least(o.allowed, 'users:' + this.user.id, action);
+    return permission.every(trees, perm, action) && permission.least(o.allowed, 'users:' + this.user.id, action);
 };
 
 token.statics.search = function (value, cb) {
