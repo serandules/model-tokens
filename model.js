@@ -4,8 +4,10 @@ var autopopulate = require('mongoose-autopopulate');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var async = require('async');
+var _ = require('lodash');
 
 var Lock = require('lock');
+var mongins = require('mongins');
 var types = require('validators').types;
 var permission = require('permission');
 
@@ -15,13 +17,6 @@ var accessibility = 60 * 1000;
 var refreshability = 10 * accessibility;
 
 var token = Schema({
-    user: {
-        server: true,
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: 'users',
-        validator: types.ref()
-    },
     has: {
         type: Object,
         default: {
@@ -30,7 +25,6 @@ var token = Schema({
             }
         }
     },
-    allowed: {type: Object, default: {}},
     created: {type: Date, default: Date.now},
     access: String,
     accessible: {type: Number, default: accessibility},
@@ -43,6 +37,11 @@ var token = Schema({
         autopopulate: true
     }
 }, {collection: 'tokens'});
+
+token.plugin(mongins);
+token.plugin(mongins.user);
+token.plugin(mongins.createdAt);
+token.plugin(mongins.updatedAt);
 
 token.plugin(autopopulate);
 
@@ -66,8 +65,23 @@ token.methods.refreshability = function () {
 };
 
 token.methods.can = function (perm, action, o) {
+    var allowed = o.allowed;
+    if (!allowed) {
+        return false;
+    }
+    var user = this.user;
+    var entry = _.find(allowed, function (o) {
+        return String(o.user) === user.id;
+    });
+    if (!entry) {
+        return false;
+    }
+    var perms = entry.perms;
+    if (perms.indexOf(action) === -1) {
+        return false;
+    }
     var trees = [this.has, this.client.has];
-    return permission.every(trees, perm, action) && permission.least(o.allowed, 'users:' + this.user.id, action);
+    return permission.every(trees, perm, action);
 };
 
 token.statics.search = function (value, cb) {
