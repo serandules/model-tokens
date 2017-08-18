@@ -45,15 +45,6 @@ token.plugin(mongins.updatedAt);
 
 token.plugin(autopopulate);
 
-token.set('toJSON', {
-    getters: true,
-    //virtuals: false,
-    transform: function (doc, ret, options) {
-        delete ret._id;
-        delete ret.__v;
-    }
-});
-
 token.methods.accessibility = function () {
     var exin = this.created.getTime() + this.accessible - new Date().getTime();
     return exin > 0 ? exin : 0;
@@ -65,19 +56,19 @@ token.methods.refreshability = function () {
 };
 
 token.methods.can = function (perm, action, o) {
-    var allowed = o.allowed;
-    if (!allowed) {
+    var permissions = o.permissions;
+    if (!permissions) {
         return false;
     }
     var user = this.user;
-    var entry = _.find(allowed, function (o) {
+    var entry = _.find(permissions, function (o) {
         return String(o.user) === user.id;
     });
     if (!entry) {
         return false;
     }
-    var perms = entry.perms;
-    if (perms.indexOf(action) === -1) {
+    var actions = entry.actions;
+    if (actions.indexOf(action) === -1) {
         return false;
     }
     var trees = [this.has, this.client.has];
@@ -144,10 +135,6 @@ token.statics.refresh = function (id, done) {
         });
     });
 };
-
-token.virtual('id').get(function () {
-    return this._id;
-});
 
 /*token.set('toJSON', {
  getters: true,
