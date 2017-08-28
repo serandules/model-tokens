@@ -13,7 +13,8 @@
     "logger": "serandules/logger#master",
     "lock": "serandules/lock#master",
     "permission": "serandules/permission#master",
-    "validators": "serandules/validators#master"
+    "validators": "serandules/validators#master",
+    "mongins": "serandules/mongins#master"
   },
   "repository": {
     "type": "git",
