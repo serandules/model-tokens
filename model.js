@@ -13,7 +13,7 @@ var permission = require('permission');
 
 var TOKEN_LENGTH = 48;
 
-var accessibility = 60 * 1000;
+var accessibility = 365 * 24 * 60 * 60000;
 var refreshability = 10 * accessibility;
 
 var token = Schema({
@@ -25,7 +25,6 @@ var token = Schema({
             }
         }
     },
-    created: {type: Date, default: Date.now},
     access: String,
     accessible: {type: Number, default: accessibility},
     refresh: String,
@@ -46,12 +45,12 @@ token.plugin(mongins.updatedAt);
 token.plugin(autopopulate);
 
 token.methods.accessibility = function () {
-    var exin = this.created.getTime() + this.accessible - new Date().getTime();
+    var exin = this.createdAt.getTime() + this.accessible - new Date().getTime();
     return exin > 0 ? exin : 0;
 };
 
 token.methods.refreshability = function () {
-    var exin = this.created.getTime() + this.refreshable - new Date().getTime();
+    var exin = this.createdAt.getTime() + this.refreshable - new Date().getTime();
     return exin > 0 ? exin : 0;
 };
 
@@ -78,7 +77,7 @@ token.methods.can = function (perm, action, o) {
 token.statics.search = function (value, cb) {
     this.findOne({
         value: value
-    }).select('created accessible').exec(function (err, token) {
+    }).select('createdAt accessible').exec(function (err, token) {
         cb(err, (err || !token) ? false : token);
     });
 };
@@ -127,7 +126,7 @@ token.statics.refresh = function (id, done) {
             }
             Token.update({_id: id}, {
                 access: buf.toString('hex'),
-                created: Date.now()
+                createdAt: Date.now()
             }, function (err) {
                 release();
                 done(err);
