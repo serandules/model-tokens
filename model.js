@@ -8,8 +8,11 @@ var _ = require('lodash');
 
 var Lock = require('lock');
 var mongins = require('mongins');
-var types = require('validators').types;
+var validators = require('validators');
 var permission = require('permission');
+
+var types = validators.types;
+var values = validators.values;
 
 var TOKEN_LENGTH = 48;
 
@@ -24,6 +27,11 @@ var token = Schema({
                 '': ['*']
             }
         }
+    },
+    limits: {
+      type: Object,
+      server: true,
+      value: values.limits()
     },
     access: String,
     accessible: {type: Number, default: accessibility},
