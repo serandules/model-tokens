@@ -51,6 +51,12 @@ var token = Schema({
     value: values.tier(),
     autopopulate: true,
     server: true
+  },
+  cors: {
+    type: [String],
+    validator: types.cors({
+      max: 10
+    })
   }
 }, {collection: 'tokens'});
 
