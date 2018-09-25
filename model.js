@@ -32,9 +32,21 @@ var token = Schema({
     type: Object,
     server: true
   },
-  access: String,
+  access: {
+    type: String,
+    server: true,
+    validator: types.string({
+      length: 96
+    })
+  },
   accessible: {type: Number, default: accessibility},
-  refresh: String,
+  refresh: {
+    type: String,
+    server: true,
+    validator: types.string({
+      length: 96
+    })
+  },
   refreshable: {type: Number, default: refreshability},
   client: {
     type: Schema.Types.ObjectId,
@@ -62,8 +74,8 @@ var token = Schema({
 
 token.plugin(mongins);
 token.plugin(mongins.user);
-token.plugin(mongins.createdAt);
-token.plugin(mongins.updatedAt);
+token.plugin(mongins.createdAt());
+token.plugin(mongins.updatedAt());
 
 token.plugin(autopopulate);
 
