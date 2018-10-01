@@ -15,6 +15,7 @@ var types = validators.types;
 var values = validators.values;
 
 var TOKEN_LENGTH = 48;
+var TOKEN_SIZE = 2 * TOKEN_LENGTH;
 
 var accessibility = 365 * 24 * 60 * 60000;
 var refreshability = 10 * accessibility;
@@ -36,16 +37,18 @@ var token = Schema({
     type: String,
     server: true,
     validator: types.string({
-      length: 96
-    })
+      length: TOKEN_SIZE
+    }),
+    value: values.random({size: TOKEN_LENGTH})
   },
   accessible: {type: Number, default: accessibility},
   refresh: {
     type: String,
     server: true,
     validator: types.string({
-      length: 96
-    })
+      length: TOKEN_SIZE
+    }),
+    value: values.random({size: TOKEN_LENGTH})
   },
   refreshable: {type: Number, default: refreshability},
   client: {
@@ -117,7 +120,7 @@ token.statics.search = function (value, cb) {
   });
 };
 
-token.pre('save', function (next) {
+/*token.pre('save', function (next) {
   var that = this;
   that.allowed = that.allowed || {};
   permission.permit(that.allowed, 'users:' + that.user, 'read');
@@ -146,7 +149,7 @@ token.pre('save', function (next) {
     function (err, results) {
       next(err);
     });
-});
+});*/
 
 token.statics.refresh = function (id, done) {
   var Token = this;
