@@ -75,7 +75,7 @@ var token = Schema({
   }
 }, {collection: 'tokens'});
 
-token.plugin(mongins);
+token.plugin(mongins());
 token.plugin(mongins.user);
 token.plugin(mongins.createdAt());
 token.plugin(mongins.updatedAt());
