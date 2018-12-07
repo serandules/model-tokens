@@ -10,11 +10,12 @@
     "mongoose": "5.1.8",
     "mongoose-autopopulate": "0.*",
     "async": "1.*",
+    "lodash": "4.17.4",
     "logger": "serandules/logger#master",
     "lock": "serandules/lock#master",
     "permission": "serandules/permission#master",
-    "validators": "serandules/validators#master",
-    "mongins": "serandules/mongins#master"
+    "mongins": "serandules/mongins#master",
+    "validators": "serandules/validators#master"
   },
   "repository": {
     "type": "git",

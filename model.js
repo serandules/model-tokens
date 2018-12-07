@@ -3,7 +3,6 @@ var mongoose = require('mongoose');
 var autopopulate = require('mongoose-autopopulate');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
-var async = require('async');
 var _ = require('lodash');
 
 var Lock = require('lock');
