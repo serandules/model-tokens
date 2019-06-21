@@ -19,7 +19,7 @@ var TOKEN_SIZE = 2 * TOKEN_LENGTH;
 var accessibility = 365 * 24 * 60 * 60000;
 var refreshability = 10 * accessibility;
 
-var token = Schema({
+var schema = Schema({
   has: {
     type: Object,
     default: {
@@ -74,24 +74,26 @@ var token = Schema({
   }
 }, {collection: 'tokens'});
 
-token.plugin(mongins());
-token.plugin(mongins.user);
-token.plugin(mongins.createdAt());
-token.plugin(mongins.updatedAt());
+schema.plugin(mongins());
+schema.plugin(mongins.user);
+schema.plugin(mongins.visibility());
+schema.plugin(mongins.permissions());
+schema.plugin(mongins.createdAt());
+schema.plugin(mongins.updatedAt());
 
-token.plugin(autopopulate);
+schema.plugin(autopopulate);
 
-token.methods.accessibility = function () {
+schema.methods.accessibility = function () {
   var exin = this.createdAt.getTime() + this.accessible - new Date().getTime();
   return exin > 0 ? exin : 0;
 };
 
-token.methods.refreshability = function () {
+schema.methods.refreshability = function () {
   var exin = this.createdAt.getTime() + this.refreshable - new Date().getTime();
   return exin > 0 ? exin : 0;
 };
 
-token.methods.can = function (perm, action, o) {
+schema.methods.can = function (perm, action, o) {
   var permissions = o.permissions;
   if (!permissions) {
     return false;
@@ -111,7 +113,7 @@ token.methods.can = function (perm, action, o) {
   return permission.every(trees, perm, action);
 };
 
-token.statics.search = function (value, cb) {
+schema.statics.search = function (value, cb) {
   this.findOne({
     value: value
   }).select('createdAt accessible').exec(function (err, token) {
@@ -150,7 +152,7 @@ token.statics.search = function (value, cb) {
     });
 });*/
 
-token.statics.refresh = function (id, done) {
+schema.statics.refresh = function (id, done) {
   var Token = this;
   Lock.acquire('refresh-' + id, function (err, release) {
     if (err) {
@@ -196,4 +198,4 @@ token.statics.refresh = function (id, done) {
  callback(null);
  };*/
 
-module.exports = mongoose.model('tokens', token);
+module.exports = mongoose.model('tokens', schema);
