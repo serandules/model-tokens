@@ -80,6 +80,7 @@ schema.plugin(mongins.visibility());
 schema.plugin(mongins.permissions());
 schema.plugin(mongins.createdAt());
 schema.plugin(mongins.updatedAt());
+schema.plugin(mongins.modifiedAt());
 
 schema.plugin(autopopulate);
 
@@ -116,7 +117,7 @@ schema.methods.can = function (perm, action, o) {
 schema.statics.search = function (value, cb) {
   this.findOne({
     value: value
-  }).select('createdAt accessible').exec(function (err, token) {
+  }).select('updatedAt accessible').exec(function (err, token) {
     cb(err, (err || !token) ? false : token);
   });
 };
