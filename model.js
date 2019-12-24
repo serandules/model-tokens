@@ -75,7 +75,7 @@ var schema = Schema({
 }, {collection: 'tokens'});
 
 schema.plugin(mongins());
-schema.plugin(mongins.user);
+schema.plugin(mongins.user());
 schema.plugin(mongins.visibility());
 schema.plugin(mongins.permissions());
 schema.plugin(mongins.createdAt());
