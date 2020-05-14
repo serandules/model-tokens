@@ -35,6 +35,7 @@ var schema = Schema({
   access: {
     type: String,
     server: true,
+    index: true,
     validator: types.string({
       length: TOKEN_SIZE
     }),
@@ -44,6 +45,7 @@ var schema = Schema({
   refresh: {
     type: String,
     server: true,
+    index: true,
     validator: types.string({
       length: TOKEN_SIZE
     }),
@@ -54,6 +56,7 @@ var schema = Schema({
     type: Schema.Types.ObjectId,
     ref: 'clients',
     required: true,
+    index: true,
     validator: types.ref(),
     autopopulate: true
   },
